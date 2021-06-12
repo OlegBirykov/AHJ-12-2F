@@ -50,7 +50,7 @@ export default class NewsWidget {
     `;
   }
 
-  bindToDOM() {
+  async bindToDOM() {
     this.widget = document.createElement('div');
     this.widget.className = this.classes.widget;
     this.widget.innerHTML = this.constructor.markup;
@@ -61,27 +61,25 @@ export default class NewsWidget {
 
     this.uploadLink.addEventListener('click', (evt) => {
       evt.preventDefault();
-      this.loadNews();
+      this.requestNews();
     });
 
     this.parentEl.append(this.widget);
-    this.loadNews();
+
+    await navigator.serviceWorker.register('./service.worker.js');
+
+    this.requestNews();
   }
 
-  async loadNews() {
+  async requestNews() {
     this.hideError();
 
     try {
       const response = await fetch(`${this.url}/news/slow`);
-      switch (response.status) {
-        case 102:
-          this.redrawNews(await response.json(), true);
-          break;
-        case 200:
-          this.redrawNews(await response.json(), true);
-          break;
-        default:
-          this.showError();
+      if (response.status) {
+        this.redrawNews(await response.json(), false);
+      } else {
+        this.showError();
       }
     } catch (e) {
       this.showError();
@@ -120,19 +118,4 @@ export default class NewsWidget {
   hideError() {
     this.error.classList.add('hidden');
   }
-
-/*
-  createWorker() {
-    this.worker = new Worker();
-
-    this.worker.addEventListener('message', (evt) => {
-      this.hashValue.innerText = evt.data;
-    });
-
-    this.worker.addEventListener('error', (evt) => {
-      this.hashValue.innerText = `Error: ${evt.message}`;
-    });
-  }
-
-  */
 }

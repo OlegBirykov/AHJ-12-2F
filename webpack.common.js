@@ -1,7 +1,7 @@
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-// const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 
 module.exports = {
   output: {
@@ -51,10 +51,9 @@ module.exports = {
       filename: '[name].css',
       chunkFilename: '[id].css',
     }),
-    //    new CopyWebpackPlugin({
-    //      patterns: [
-    // { from: './src/img', to: 'img' },
-    //      ],
-    //    }),
+    new ServiceWorkerWebpackPlugin({
+      entry: './src/js/service.worker.js',
+      filename: 'service.worker.js',
+    }),
   ],
 };

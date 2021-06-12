@@ -39,15 +39,19 @@
   "dependencies": {
     "copy-webpack-plugin": "^6.1.0",
     "core-js": "3",
+    "eslint-restricted-globals": "^0.2.0",
     "html-webpack-plugin": "^4.4.1",
     "mini-css-extract-plugin": "^0.11.1",
     "moment": "^2.29.1",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "push-dir": "^0.4.1",
+    "serviceworker-webpack-plugin": "^1.0.1",
     "terser-webpack-plugin": "^4.1.0",
     "webpack": "^4.44.2",
     "webpack-dev-server": "^3.11.0",
-    "webpack-merge": "^5.1.4"
+    "webpack-merge": "^5.1.4",
+    "workbox-webpack-plugin": "^6.1.5",
+    "worker-loader": "^3.0.8"
   },
   "repository": "git+https://github.com/OlegBirykov/AHJ-12-2F.git",
   "bugs": {

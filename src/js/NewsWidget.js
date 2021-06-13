@@ -69,17 +69,10 @@ export default class NewsWidget {
     navigator.serviceWorker.addEventListener('message', async (evt) => {
       if (evt.data === 'ready') {
         this.hideError();
-
-        try {
-          const response = await fetch(dataUrl);
-          if (response.status) {
-            this.redrawNews(await response.json(), false);
-          } else {
-            this.showError();
-          }
-        } catch (e) {
-          this.showError();
-        }
+        const response = await fetch(dataUrl);
+        this.redrawNews(await response.json(), false);
+      } else {
+        this.showError();
       }
     });
 
@@ -88,17 +81,8 @@ export default class NewsWidget {
 
   async requestNews() {
     this.hideError();
-
-    try {
-      const response = await fetch(loadingUrl);
-      if (response.status) {
-        this.redrawNews(await response.json(), true);
-      } else {
-        this.showError();
-      }
-    } catch (e) {
-      this.showError();
-    }
+    const response = await fetch(loadingUrl);
+    this.redrawNews(await response.json(), true);
   }
 
   redrawNews(news, isLoading) {

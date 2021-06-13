@@ -46,13 +46,22 @@ self.addEventListener('fetch', (evt) => {
       })());
 
       evt.waitUntil((async () => {
-        const cache = await caches.open(dataCache);
-        const response = await fetch(evt.request.url);
-        await cache.put(dataUrl, response);
-
         const clients = await self.clients.matchAll();
         const client = clients.find((item) => item.id === evt.clientId);
-        client.postMessage('ready');
+
+        const cache = await caches.open(dataCache);
+
+        try {
+          const response = await fetch(evt.request.url);
+          if (response.ok) {
+            await cache.put(dataUrl, response);
+            client.postMessage('ready');
+          } else {
+            client.postMessage('error');
+          }
+        } catch (e) {
+          client.postMessage('error');
+        }
       })());
       break;
 

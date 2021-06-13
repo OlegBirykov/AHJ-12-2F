@@ -1,6 +1,14 @@
 import NewsWidget from './NewsWidget';
 
-const newsServer = 'https://ahj-12-2.herokuapp.com';
+const isSWActive = navigator.serviceWorker.controller;
 
-const news = new NewsWidget(document.getElementById('container'), newsServer);
+(async () => {
+  await navigator.serviceWorker.register('./service.worker.js');
+})();
+
+if (!isSWActive) {
+  window.location.reload();
+}
+
+const news = new NewsWidget(document.getElementById('container'));
 news.bindToDOM();

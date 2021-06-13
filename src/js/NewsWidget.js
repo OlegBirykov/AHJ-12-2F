@@ -1,10 +1,10 @@
-// import Worker from './hash.worker';
-import { getISODateTime, getTextDateTime } from './tools';
+import {
+  loadingUrl, dataUrl, imagesUrl, getISODateTime, getTextDateTime,
+} from './tools';
 
 export default class NewsWidget {
-  constructor(parentEl, newsServer) {
+  constructor(parentEl) {
     this.parentEl = parentEl;
-    this.url = newsServer;
     this.classes = this.constructor.classes;
   }
 
@@ -50,7 +50,7 @@ export default class NewsWidget {
     `;
   }
 
-  async bindToDOM() {
+  bindToDOM() {
     this.widget = document.createElement('div');
     this.widget.className = this.classes.widget;
     this.widget.innerHTML = this.constructor.markup;
@@ -66,7 +66,22 @@ export default class NewsWidget {
 
     this.parentEl.append(this.widget);
 
-    await navigator.serviceWorker.register('./service.worker.js');
+    navigator.serviceWorker.addEventListener('message', async (evt) => {
+      if (evt.data === 'ready') {
+        this.hideError();
+
+        try {
+          const response = await fetch(dataUrl);
+          if (response.status) {
+            this.redrawNews(await response.json(), false);
+          } else {
+            this.showError();
+          }
+        } catch (e) {
+          this.showError();
+        }
+      }
+    });
 
     this.requestNews();
   }
@@ -75,9 +90,9 @@ export default class NewsWidget {
     this.hideError();
 
     try {
-      const response = await fetch(`${this.url}/news/slow`);
+      const response = await fetch(loadingUrl);
       if (response.status) {
-        this.redrawNews(await response.json(), false);
+        this.redrawNews(await response.json(), true);
       } else {
         this.showError();
       }
@@ -94,7 +109,7 @@ export default class NewsWidget {
         </time>
         <div class="${this.classes.newContainer}">
           <div class="${this.classes.newImageContainer}">
-            <img class="${this.classes.newImage}" src="${this.url}/images/${item.image}" alt="new" width="50" height="50">
+            <img class="${this.classes.newImage}" src="${imagesUrl}${item.image}" alt="new" width="50" height="50">
           </div>
           <div class="${this.classes.newTextContainer}">
             <span class="${this.classes.newText}">${item.text}</span>
